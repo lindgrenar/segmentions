@@ -1,5 +1,6 @@
 from collections import Counter
 import os
+import argparse
 import re
 import imageio
 from pytube import YouTube
@@ -216,13 +217,14 @@ def cut_video_segments(timeline, emotion_classifier, subtitles):
         segment.write_videofile(file_name)
 
 
-def main():
+def main(api_key, video_id):
     """
-    The main function that calls all the other functions. It initializes the API key and video ID, gets the video comments, filters them, labels the timeline, loads the emotion classifier, downloads the video, cuts the video into segments, and saves the timeline to a database.
-    """
-    api_key = 'YOUR_API_KEY'  # Replace with your YouTube API key
-    video_id = 'YOUR_VIDEO_ID'  # Replace with the ID of the YouTube video you want to analyze
+    The main function that calls all the other functions. It gets the video comments, filters them, labels the timeline, loads the emotion classifier, downloads the video, cuts the video into segments, and saves the timeline to a database.
 
+    Args:
+        api_key (str): The YouTube API key.
+        video_id (str): The ID of the YouTube video to analyze.
+    """
     comments = get_video_comments(api_key, video_id)
     filtered_comments = filter_comments(comments)
     timeline = label_timeline(filtered_comments)
@@ -235,4 +237,9 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description='Analyze YouTube video comments and subtitles.')
+    parser.add_argument('api_key', help='Your YouTube API key.')
+    parser.add_argument('video_id', help='The ID of the YouTube video to analyze.')
+    args = parser.parse_args()
+
+    main(args.api_key, args.video_id)
